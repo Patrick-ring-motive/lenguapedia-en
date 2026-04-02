@@ -1,8 +1,6 @@
 //intercept and redirect fetch requests
 window.Response.redirect = window.Response.customRedirect;
 
-
-
 window.Response.nativeClone = window.Response.clone;
 
 window.Response.customClone = function() {
@@ -14,8 +12,6 @@ window.Response.customClone = function() {
 }
 
 window.Response.clone = window.Response.customClone;
-
-
 
 window.Response.nativeError = window.Response.error;
 
@@ -29,7 +25,6 @@ window.Response.customError = function() {
 
 window.Response.error = window.Response.customError;
 
-
 window.Response.nativeText = window.Response.text;
 
 window.Response.customText = async function() {
@@ -41,9 +36,6 @@ window.Response.customText = async function() {
 }
 
 window.Response.text = window.Response.customText;
-
-
-
 
 window.Response.nativeJson = window.Response.json;
 
@@ -57,10 +49,6 @@ window.Response.customJson = async function() {
 
 window.Response.json = window.Response.customJson;
 
-
-
-
-
 window.Response.nativeBlob = window.Response.blob;
 
 window.Response.customBlob = async function() {
@@ -72,8 +60,6 @@ window.Response.customBlob = async function() {
 }
 
 window.Response.blob = window.Response.customBlob;
-
-
 
 window.Response.nativeFormData = window.Response.formData;
 
@@ -87,9 +73,6 @@ window.Response.customFormData = async function() {
 
 window.Response.formData = window.Response.customFormData;
 
-
-
-
 window.Response.nativeArrayBuffer = window.Response.arrayBuffer;
 
 window.Response.customArrayBuffer = async function() {
@@ -101,9 +84,6 @@ window.Response.customArrayBuffer = async function() {
 }
 
 window.Response.arrayBuffer = window.Response.customArrayBuffer;
-
-
-
 
 window.Request.nativeClone = window.Request.clone;
 
@@ -117,8 +97,6 @@ window.Request.customClone = function() {
 
 window.Request.clone = window.Request.customClone;
 
-
-
 window.Request.nativeText = window.Request.text;
 
 window.Request.customText = async function() {
@@ -130,9 +108,6 @@ window.Request.customText = async function() {
 }
 
 window.Request.text = window.Request.customText;
-
-
-
 
 window.Request.nativeJson = window.Request.json;
 
@@ -146,10 +121,6 @@ window.Request.customJson = async function() {
 
 window.Request.json = window.Request.customJson;
 
-
-
-
-
 window.Request.nativeBlob = window.Request.blob;
 
 window.Request.customBlob = async function() {
@@ -161,8 +132,6 @@ window.Request.customBlob = async function() {
 }
 
 window.Request.blob = window.Request.customBlob;
-
-
 
 window.Request.nativeFormData = window.Request.formData;
 
@@ -176,9 +145,6 @@ window.Request.customFormData = async function() {
 
 window.Request.formData = window.Request.customFormData;
 
-
-
-
 window.Request.nativeArrayBuffer = window.Request.arrayBuffer;
 
 window.Request.customArrayBuffer = async function() {
@@ -190,7 +156,6 @@ window.Request.customArrayBuffer = async function() {
 }
 
 window.Request.arrayBuffer = window.Request.customArrayBuffer;
-
 
 window.nativeFetch = window.fetch;
 
@@ -217,7 +182,9 @@ window.customFetch = async function(request, headers) {
 
   }
 
-  if (headers) { response.requestInputHeaders = headers; }
+  if (headers) {
+    response.requestInputHeaders = headers;
+  }
 
   return response;
 
