@@ -19,7 +19,10 @@ import fetch from 'node-fetch';
 import http from 'http';
 import addCorsHeaders from './cors-headers.mjs';
 import maintain from './modules/auto-maintain.mjs';
-import { availReq, availRes } from './modules/availability.mjs';
+import {
+  availReq,
+  availRes
+} from './modules/availability.mjs';
 import './modules/vercel-caches.mjs';
 import './modules/serverlessCache.mjs';
 
@@ -38,9 +41,8 @@ async function onRequest(req, res) {
 
   res = availRes(res);
 
-
   let cacheKey = serverlessCache.generateCacheKey(req);
-  let cacheVal;// = await serverlessCache.matchClone(cacheKey);
+  let cacheVal; // = await serverlessCache.matchClone(cacheKey);
   let response;
   let referer;
   //console.log(cacheKey,cacheVal);
@@ -49,7 +51,6 @@ async function onRequest(req, res) {
     response = cacheVal;
 
   }
-
 
   const hostProxy = req.headers['host'];
   referer = req.headers['referer'];
@@ -62,8 +63,11 @@ async function onRequest(req, res) {
   res = addCorsHeaders(res);
   req.url = removeHache(req.url);
   let path = req.url.replaceAll('*', '');
-  if (path.startsWith('/_root/')) { path = path.replace('/_root/', '/'); }
-  else if (path.startsWith('/_root')) { path = path.replace('/_root', '/'); }
+  if (path.startsWith('/_root/')) {
+    path = path.replace('/_root/', '/');
+  } else if (path.startsWith('/_root')) {
+    path = path.replace('/_root', '/');
+  }
   let pat = path.split('?')[0].split('#')[0];
 
   if (pat == '/en-link-resolver.v.js') {
@@ -84,16 +88,15 @@ async function onRequest(req, res) {
   }
   if (pat == '/wiki.css') {
 
-
     let resp = await fetch('https://files-servleteer.vercel.app/lenguapedia/en' + req.url);
-    if (req.url == '/' || req.url == '') { req.url = '/index.html'; }
+    if (req.url == '/' || req.url == '') {
+      req.url = '/index.html';
+    }
     let file = Buffer.from(await (resp).arrayBuffer());
     res.setHeader('Content-Type', resp.headers.get('Content-Type'));
     return res.endAvail(file);
 
   }
-
-
 
   /* start reading the body of the request*/
   let bdy = "";
@@ -102,7 +105,6 @@ async function onRequest(req, res) {
   });
   req.on('end', async function() {
     if (!cacheVal) {
-
 
       req.headers.host = hostTarget;
       req.headers.referer = hostTarget;
@@ -135,7 +137,7 @@ async function onRequest(req, res) {
       }
 
       if (response?.status && (response?.status > 199) && (response?.status < 300)) {
-      //  response = await serverlessCache.putClone(cacheKey, response);
+        //  response = await serverlessCache.putClone(cacheKey, response);
         //console.log(serverlessCache);
       }
     }
@@ -155,13 +157,10 @@ async function onRequest(req, res) {
     /* for some reasone content-length header is really killing this. Might be because gzip length is too short */
     res.removeHeader('content-length');
 
-
     res = addCorsHeaders(res);
 
     /* check to see if the response is not a text format */
     let ct = response.headers.get('content-type');
-
-
 
     res.setHeader('content-type', ct);
     res.setHeader('Cloudflare-CDN-Cache-Control', 'public, max-age=96400, s-max-age=96400, stale-if-error=31535000, stale-while-revalidate=31535000');
@@ -171,7 +170,6 @@ async function onRequest(req, res) {
     res.setHeader('Surrogate-Control', 'public, max-age=96400, s-max-age=96400, stale-if-error=31535000, stale-while-revalidate=31535000');
 
     if ((ct) && (!(ct.includes('image') && (!ct.includes('svg')))) && (!ct.includes('video')) && (!ct.includes('audio'))) {
-
 
       /* Copy over target response and return */
       let resBody = response.fullBody;
@@ -193,7 +191,7 @@ async function onRequest(req, res) {
         `<http>
           <http-response>
             <http-headers>
-              <http-header key="referer" value="`+ referer + `"></http-header>
+              <http-header key="referer" value="` + referer + `"></http-header>
             </http-headers>
           </http-response>
         </http>
@@ -204,16 +202,15 @@ async function onRequest(req, res) {
       let bodyTagHead = resBody.match(/<body[^>]*>/)?.[0] || '<body>';
 
       let resNewBody = resBody.replace(/<body[^>]*>/,
-        bodyTagHead +
-        `<script src="https://` + hostProxy + `/en-link-resolver.v.js" host-list="` + btoa(JSON.stringify(hostList)) + `"></script>`+
- //    `<script src="https://`+ hostProxy + `/fetch-redirect.cjs"></script>`+
-        `<link rel="stylsheet" href="/wiki.css?5"></link>`)
+          bodyTagHead +
+          `<script src="https://` + hostProxy + `/en-link-resolver.v.js" host-list="` + btoa(JSON.stringify(hostList)) + `"></script>` +
+          //    `<script src="https://`+ hostProxy + `/fetch-redirect.cjs"></script>`+
+          `<link rel="stylsheet" href="/wiki.css?5"></link>`)
         .replace('</body>',
-          `<script src="https://` + hostProxy + `/en-link-resolver.v.js" host-list="` + btoa(JSON.stringify(hostList)) + `"></script>`+
-    // `<script src="https://`+ hostProxy + `/fetch-redirect.cjs"></script>`+
-    `<link rel="stylsheet" href="/wiki.css?5"></link></body>`);
+          `<script src="https://` + hostProxy + `/en-link-resolver.v.js" host-list="` + btoa(JSON.stringify(hostList)) + `"></script>` +
+          // `<script src="https://`+ hostProxy + `/fetch-redirect.cjs"></script>`+
+          `<link rel="stylsheet" href="/wiki.css?5"></link></body>`);
       return res.endAvail(resNewBody);
-
 
     } else {
       let resBody;
@@ -225,9 +222,7 @@ async function onRequest(req, res) {
       res.setHeader('Content-Type', ct);
       return res.endAvail(resBody);
 
-
     }
   });
-
 
 }
